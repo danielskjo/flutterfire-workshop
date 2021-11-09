@@ -9,11 +9,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:flutterfire_workshop/main.dart';
+import '../lib/screens/dashboard_screen.dart';
+import '../lib/screens/login_screen.dart';
+import '../lib/screens/registration_screen.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MaterialApp(initialRoute: "/login", routes: {
+      "/login": (context) => LoginScreen(),
+      "/register": (context) => RegistrationScreen(),
+      "/dashboard": (context) => DashboardScreen(),
+    }));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
