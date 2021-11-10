@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../services/auth_service.dart';
+
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
 
@@ -10,6 +12,8 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _key = GlobalKey<FormState>();
+
+  final AuthService _auth = new AuthService();
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -121,14 +125,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  void register() {
-    // TODO: Implement Firebase Auth
-    print("Name: " + _nameController.text);
-    print("Email: " + _emailController.text);
-    print("Password: " + _passwordController.text);
-    _nameController.clear();
-    _emailController.clear();
-    _passwordController.clear();
-    Navigator.pushNamed(context, '/dashboard');
+  void register() async {
+    dynamic result = await _auth.register(
+        _nameController.text, _emailController.text, _passwordController.text);
+    if (result == null) {
+      print('Email is not valid');
+    } else {
+      print(result.toString());
+      _nameController.clear();
+      _passwordController.clear();
+      _emailController.clear();
+      Navigator.pushNamed(context, '/dashboard');
+    }
   }
 }

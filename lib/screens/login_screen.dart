@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../services/auth_service.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -10,6 +12,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _key = GlobalKey<FormState>();
+
+  final AuthService _auth = new AuthService();
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -110,11 +114,14 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void login() async {
-    // TODO: Implement Firebase Auth
-    print("Email: " + _emailController.text);
-    print("Password: " + _passwordController.text);
-    _emailController.clear();
-    _passwordController.clear();
-    Navigator.pushNamed(context, '/dashboard');
+    dynamic authResult =
+        await _auth.login(_emailController.text, _passwordController.text);
+    if (authResult == null) {
+      print('Could not login. Check email and password.');
+    } else {
+      _emailController.clear();
+      _passwordController.clear();
+      Navigator.pushNamed(context, '/dashboard');
+    }
   }
 }

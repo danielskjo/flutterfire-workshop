@@ -1,5 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../services/auth_service.dart';
+import '../services/db_service.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -9,10 +14,49 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  final AuthService _auth = AuthService();
+
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
   List posts = [];
+
+  String userId = "";
+  String name = "";
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserId();
+    fetchPosts();
+  }
+
+  fetchUserId() {
+    userId = FirebaseAuth.instance.currentUser!.uid;
+  }
+
+  fetchUserData() async {
+    dynamic user = await DatabaseService()
+        .getUserData(FirebaseAuth.instance.currentUser!.uid);
+
+    if (user != null) {
+      setState(() {
+        name = user.get(FieldPath(['name']));
+      });
+    }
+  }
+
+  fetchPosts() async {
+    dynamic result = await DatabaseService().getPostsData();
+
+    if (result == null) {
+      print('Unable to get posts');
+    } else {
+      setState(() {
+        posts = result;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +82,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: ListTile(
               title: Text(posts[index]['title']),
               subtitle: Text(posts[index]['description']),
-              trailing: IconButton(
-                onPressed: () {
-                  delete(context, index);
-                },
-                icon: const Icon(Icons.delete),
-              ),
             ));
           }),
       floatingActionButton: FloatingActionButton(
@@ -56,7 +94,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void logout() {
-    // TODO: Implement Firebase
+    _auth.logout();
+    Navigator.pushNamed(context, '/login');
   }
 
   createPost(BuildContext context) {
@@ -100,17 +139,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   submitAction(BuildContext context) {
-    posts.add({
-      'title': _titleController.text,
-      'description': _descriptionController.text
-    });
-    print(posts);
+    DatabaseService().createPostData(DateTime.now().toString(), userId, name,
+        _titleController.text, _descriptionController.text, DateTime.now());
     _titleController.clear();
     _descriptionController.clear();
-  }
-
-  delete(BuildContext context, int index) {
-    // TODO: Implement Firebase
-    posts.removeAt(index);
   }
 }

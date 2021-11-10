@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "238860287146",
+    "project_id": "flutterfire-tutorial-80d6d",
+    "storage_bucket": "flutterfire-tutorial-80d6d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:238860287146:android:544d8c44a195f6a5bc24d3",
+        "android_client_info": {
+          "package_name": "com.example.flutterfire_workshop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "238860287146-ai06627r6l9ks0svgfi7ma2649vgt7l2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYzITUDNB6W07Ih7w7dIzKEMBkRylU17g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "238860287146-ai06627r6l9ks0svgfi7ma2649vgt7l2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "238860287146-je5t247an8ks2ji6cv380b122b20p8lf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterfireWorkshop"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
