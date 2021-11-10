@@ -113,6 +113,8 @@ class _LoginScreenState extends State<LoginScreen> {
     // TODO: Implement Firebase Auth
     print("Email: " + _emailController.text);
     print("Password: " + _passwordController.text);
+    _emailController.clear();
+    _passwordController.clear();
     Navigator.pushNamed(context, '/dashboard');
   }
 }
