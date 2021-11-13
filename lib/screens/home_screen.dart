@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../services/db_service.dart';
 
-class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  _DashboardScreenState createState() => _DashboardScreenState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   final AuthService _auth = AuthService();
 
   final TextEditingController _titleController = TextEditingController();
@@ -42,6 +42,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: const Icon(Icons.home),
         title: const Text("Home"),
         actions: [
           IconButton(

@@ -118,7 +118,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       print(result.toString());
       _passwordController.clear();
       _emailController.clear();
-      Navigator.pushNamed(context, '/dashboard');
+      Navigator.pushNamed(context, '/home');
     }
   }
 }
