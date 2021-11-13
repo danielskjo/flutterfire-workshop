@@ -13,7 +13,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _key = GlobalKey<FormState>();
 
-  final AuthService _auth = new AuthService();
+  final AuthService _auth = AuthService();
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -116,6 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void login() async {
     dynamic authResult =
         await _auth.login(_emailController.text, _passwordController.text);
+
     if (authResult == null) {
       print('Could not login. Check email and password.');
     } else {

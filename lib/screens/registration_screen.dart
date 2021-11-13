@@ -13,9 +13,8 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _key = GlobalKey<FormState>();
 
-  final AuthService _auth = new AuthService();
+  final AuthService _auth = AuthService();
 
-  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -47,22 +46,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 padding: const EdgeInsets.all(32.0),
                 child: Column(
                   children: [
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    TextFormField(
-                      controller: _nameController,
-                      validator: (val) => val == "" ? 'Enter your name' : null,
-                      decoration: const InputDecoration(
-                        labelText: 'Name',
-                        labelStyle: TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
-                      style: const TextStyle(
-                        color: Colors.black,
-                      ),
-                    ),
                     const SizedBox(
                       height: 30,
                     ),
@@ -126,13 +109,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void register() async {
-    dynamic result = await _auth.register(
-        _nameController.text, _emailController.text, _passwordController.text);
+    dynamic result =
+        await _auth.register(_emailController.text, _passwordController.text);
+
     if (result == null) {
       print('Email is not valid');
     } else {
       print(result.toString());
-      _nameController.clear();
       _passwordController.clear();
       _emailController.clear();
       Navigator.pushNamed(context, '/dashboard');

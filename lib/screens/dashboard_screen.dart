@@ -1,7 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../services/auth_service.dart';
 import '../services/db_service.dart';
@@ -19,41 +18,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
-  List posts = [];
-
-  String userId = "";
-  String name = "";
+  late Stream posts;
 
   @override
   void initState() {
     super.initState();
-    fetchUserId();
     fetchPosts();
   }
 
-  fetchUserId() {
-    userId = FirebaseAuth.instance.currentUser!.uid;
-  }
-
-  fetchUserData() async {
-    dynamic user = await DatabaseService()
-        .getUserData(FirebaseAuth.instance.currentUser!.uid);
-
-    if (user != null) {
-      setState(() {
-        name = user.get(FieldPath(['name']));
-      });
-    }
-  }
-
   fetchPosts() async {
-    dynamic result = await DatabaseService().getPostsData();
+    dynamic results = await DatabaseService().getPosts();
 
-    if (result == null) {
+    if (results == null) {
       print('Unable to get posts');
     } else {
       setState(() {
-        posts = result;
+        posts = results;
       });
     }
   }
@@ -62,11 +42,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(
-          color: Colors.white,
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text("Dashboard"),
+        title: const Text("Home"),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -75,14 +51,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
       backgroundColor: Colors.white,
-      body: ListView.builder(
-          itemCount: posts.length,
-          itemBuilder: (context, index) {
-            return Card(
-                child: ListTile(
-              title: Text(posts[index]['title']),
-              subtitle: Text(posts[index]['description']),
-            ));
+      body: StreamBuilder(
+          stream: posts,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(child: Text('Loading'));
+            }
+
+            return ListView(
+              children: (snapshot.data! as QuerySnapshot).docs.map((post) {
+                return Center(
+                  child: ListTile(
+                    title: Text(post['title']),
+                    subtitle: Text(post['description']),
+                  ),
+                );
+              }).toList(),
+            );
           }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -125,7 +110,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   submitAction(context);
                   Navigator.pop(context);
                 },
-                child: const Text('Submit'),
+                child: const Text('Create'),
               ),
               TextButton(
                 onPressed: () {
@@ -139,8 +124,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   submitAction(BuildContext context) {
-    DatabaseService().createPostData(DateTime.now().toString(), userId, name,
+    DatabaseService().createPost(DateTime.now().toString(),
         _titleController.text, _descriptionController.text, DateTime.now());
+    fetchPosts();
     _titleController.clear();
     _descriptionController.clear();
   }
