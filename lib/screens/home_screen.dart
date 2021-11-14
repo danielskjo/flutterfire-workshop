@@ -1,9 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../services/auth_service.dart';
-import '../services/db_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -13,30 +9,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final AuthService _auth = AuthService();
-
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
-  late Stream posts;
-
-  @override
-  void initState() {
-    super.initState();
-    fetchPosts();
-  }
-
-  fetchPosts() async {
-    dynamic results = await DatabaseService().getPosts();
-
-    if (results == null) {
-      print('Unable to get posts');
-    } else {
-      setState(() {
-        posts = results;
-      });
-    }
-  }
+  List posts = [];
 
   @override
   Widget build(BuildContext context) {
@@ -52,23 +28,14 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       backgroundColor: Colors.white,
-      body: StreamBuilder(
-          stream: posts,
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(child: Text('Loading'));
-            }
-
-            return ListView(
-              children: (snapshot.data! as QuerySnapshot).docs.map((post) {
-                return Center(
-                  child: ListTile(
-                    title: Text(post['title']),
-                    subtitle: Text(post['description']),
-                  ),
-                );
-              }).toList(),
-            );
+      body: ListView.builder(
+          itemCount: posts.length,
+          itemBuilder: (context, index) {
+            return Card(
+                child: ListTile(
+                  title: Text(posts[index]['title']),
+                  subtitle: Text(posts[index]['description']),
+                ));
           }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -80,7 +47,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void logout() {
-    _auth.logout();
     Navigator.pushNamed(context, '/login');
   }
 
@@ -125,9 +91,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   submitAction(BuildContext context) {
-    DatabaseService().createPost(DateTime.now().toString(),
-        _titleController.text, _descriptionController.text, DateTime.now());
-    fetchPosts();
+    posts.add({
+      'title': _titleController.text,
+      'description': _descriptionController.text
+    });
+    print(posts);
     _titleController.clear();
     _descriptionController.clear();
   }

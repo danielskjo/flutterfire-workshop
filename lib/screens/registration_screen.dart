@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../services/auth_service.dart';
-
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
 
@@ -12,8 +10,6 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _key = GlobalKey<FormState>();
-
-  final AuthService _auth = AuthService();
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -108,17 +104,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  void register() async {
-    dynamic result =
-        await _auth.register(_emailController.text, _passwordController.text);
-
-    if (result == null) {
-      print('Email is not valid');
-    } else {
-      print(result.toString());
-      _passwordController.clear();
-      _emailController.clear();
-      Navigator.pushNamed(context, '/home');
-    }
+  void register() {
+    _passwordController.clear();
+    _emailController.clear();
+    Navigator.pushNamed(context, '/home');
   }
 }
